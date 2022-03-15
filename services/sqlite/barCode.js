@@ -29,7 +29,7 @@ const all = (obj) => {
       tx.executeSql(
         "SELECT * FROM bars;",
         [],
-        (_, { rows }) => resolve(rows._array),
+        (_, { code: { _array } }) => setItems(_array),
         (_, error) => reject(error) // erro interno em tx.executeSql
       );
     });
