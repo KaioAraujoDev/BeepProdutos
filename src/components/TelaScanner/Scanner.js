@@ -29,8 +29,8 @@ export default function Scanner(props) {
 
   return (
     <View style={{
-        width:'100%',
-        height:'65%',
+        width:500,
+        height:'75%',
         flexDirection:'column',
         justifyContent: 'center',
         
@@ -39,7 +39,7 @@ export default function Scanner(props) {
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
       />
-      {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
+   
     </View>
   );
 }

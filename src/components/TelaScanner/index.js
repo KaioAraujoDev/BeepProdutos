@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  Button,
+  ActivityIndicator,
   Modal,
   StyleSheet,
   TouchableOpacity,
-  FlatList
+  FlatList,
 } from 'react-native';
 import Scanner from './Scanner';
 import barCode from '../../../services/sqlite/barCode';
@@ -16,61 +16,53 @@ export default function TelaScanner() {
 
   const [modalVisible, setModalVisible] = useState(false)
   const [items, setItems] = useState([]);
-  var array=[]
+  const [att, setAtt] = useState(false)
 
 
+  //A Data só esta sendo notada no início do código
   useEffect(() => {
     db.transaction((tx) => {
       tx.executeSql(
         `select * from bars`,
         [],
-        function (tx, res) {
-          for (let i = 0; i < res.rows.length; ++i) {
+        function (tx, res) {      
+          for (let i = items.length; i < res.rows.length; ++i) {
             //Precisamos passar uma matriz para a variável 
             //Para transportar mais de uma informação pra cada id.
 
             //Adicionar
-       
-            // console.log('Dado: ',res.rows.item(i))
-            setItems(oldArray => [...oldArray,res.rows.item(i)])
-            
-            
+            setItems(oldArray => [...oldArray, res.rows.item(i)])
+          
           }
-          array=items
-          // console.log('Variavel: ',items[1])
-          console.log('Variavel: ',array[1])
+       
         }
       )
     })
-   
-  }, [])
+  }, [att])
+
+
 
 
   //Quando o código for escaneado faça:
   const onCodeScanned = (type, data) => {
     // GUARDAR
-    // barCode.create({ code: data })
-    //   .then(console.log('banana'))
-    //   .catch(err => console.log(err))
+    barCode.create({ code: data })
+      .then(setAtt(!att))
+      .catch(err => console.log(err))
 
     setModalVisible(false)
-
   }
 
-  const RenderItem = ({ item }) => {
-    //const listItems = items.map((items) => items);
 
+  const renderItem = ({ item }) => {
+    //const listItems = items.map(c(items) => items);
     return (
-
       <View style={styles.boxLista}>
-        {/* {items.map(()=>(
-        <Text style={styles.textBoxLista}>Código:</Text>
-      ))} */}
-
-        <Text style={styles.textBoxLista}></Text>
-       
+        <Text>Código{item.code}</Text>
+        <Text>Id:{item.id}</Text>
       </View>
     )
+
   }
 
   return (
@@ -83,15 +75,17 @@ export default function TelaScanner() {
       >
         <View style={styles.modal}>
           <Scanner onCodeScanned={onCodeScanned} />
-          <Button
-            title='Cancelar'
+          <TouchableOpacity
+            style={styles.botao}
             onPress={() => setModalVisible(false)}
-          />
+          >
+            <Text styles={styles.textBotao}>Cancelar</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
 
 
-
+    
       <TouchableOpacity style={styles.botao} onPress={() => setModalVisible(true)}>
         <Text style={styles.textBotao}>
           Escanear
@@ -99,8 +93,7 @@ export default function TelaScanner() {
       </TouchableOpacity>
 
       <View style={styles.cardLista}>
-        <FlatList data={array} renderItem={RenderItem}/>
-        <RenderItem />
+        {(items.length > 0)?<FlatList data={items} renderItem={renderItem} inverted />:<ActivityIndicator color="#3FBFBF" size={65}/>}
       </View>
     </View>
   )
@@ -114,6 +107,8 @@ const styles = StyleSheet.create({
     paddingTop: 15
   },
   modal: {
+    marginTop:'50%',
+    marginHorizontal:10,
     height: '45%',
     alignItems: 'center',
     justifyContent: 'space-around',
@@ -131,7 +126,7 @@ const styles = StyleSheet.create({
   botao: {
     padding: 15,
     backgroundColor: '#3FBFBF',
-    marginBottom: 35,
+    marginBottom: 15,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 5,
@@ -153,7 +148,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8E8E8',
     height: '75%',
     width: '85%',
-    padding: 15
+    padding: 15,
+    justifyContent: 'center',
   },
   boxLista: {
     backgroundColor: '#3FBFBF',
