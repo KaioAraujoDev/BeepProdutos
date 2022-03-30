@@ -9,7 +9,7 @@ export default function TelaInicial(props) {
               <TouchableOpacity onPress={()=>{props.navigation.navigate('Escaneamento')}}style={styles.botao}>
                 <Text style={styles.textBotao}>Adicionar Produto</Text>
               </TouchableOpacity>
-              <TouchableOpacity  style={styles.botao}>
+              <TouchableOpacity  style={styles.botao} onPress={()=>{props.navigation.navigate('Lista de produtos')}}>
                 <Text style={styles.textBotao}>Lista de produtos</Text>
               </TouchableOpacity>
         </View>

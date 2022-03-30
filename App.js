@@ -6,14 +6,27 @@ const Stack = createNativeStackNavigator();
 
 import TelaScanner from './src/components/TelaScanner'
 import TelaInicial from './src/components/TelaInicial'
-
+import TelaLista from './src/components/TelaLista'
 export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+      screenOptions={{
+        headerStyle:{
+           backgroundColor:'rgba(6,55,66,0.7)',
+
+        },
+        headerTitleStyle:{
+          color:'white'
+        },
+        headerTintColor:'white'
+      }}
+      >
         <Stack.Screen name='Tela Inicial' component={TelaInicial}/>
         <Stack.Screen name='Escaneamento' component={TelaScanner} />
+        <Stack.Screen
+        name='Lista de produtos' component={TelaLista}/>
       </Stack.Navigator>
     </NavigationContainer>
   )

@@ -15,25 +15,24 @@ export default function Scanner(props) {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`Código de barras tem o tipo ${type} e código ${data} escaneado!`)
+  
     props.onCodeScanned(type,data);
 
   };
 
-  if (hasPermission === null) {
+   if (hasPermission === null) {
     return <Text>Permita o acesso a câmera</Text>;
-  }
+   }
   if (hasPermission === false) {
     return <Text>Erro: sem acesso a câmera</Text>;
   }
 
   return (
     <View style={{
-        width:500,
-        height:'75%',
-        flexDirection:'column',
-        justifyContent: 'center',
-        
+      height:'100%',
+      width:'100%',
+      alignItems: 'center',
+      justifyContent: 'center'
     }}>
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}

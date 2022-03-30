@@ -1,166 +1,134 @@
 import React, { useState, useEffect } from 'react';
+import { AntDesign, Entypo } from '@expo/vector-icons';
+
 import {
-  View,
-  Text,
-  ActivityIndicator,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
+    View,
+    Text,
+    ActivityIndicator,
+    Modal,
+    StyleSheet,
+    TouchableOpacity,
+    FlatList,
+    TextInput,
+    Alert,
 } from 'react-native';
 import Scanner from './Scanner';
+import ModalInputs from './modal';
 import barCode from '../../../services/sqlite/barCode';
 import db from '../../../services/sqlite/SQLiteDatabase';
 
-export default function TelaScanner() {
+export default function TelaScanner(props) {
 
-  const [modalVisible, setModalVisible] = useState(false)
-  const [items, setItems] = useState([]);
-  const [att, setAtt] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false)
+    const [sucess,setSucess] = useState(false)
 
+    const [codigo, setCodigo] = useState('');
 
-  //A Data só esta sendo notada no início do código
-  useEffect(() => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        `select * from bars`,
-        [],
-        function (tx, res) {      
-          for (let i = items.length; i < res.rows.length; ++i) {
-            //Precisamos passar uma matriz para a variável 
-            //Para transportar mais de uma informação pra cada id.
+    const [items, setItems] = useState([]);//array de items da lista
+    const [Loading, setLoading] = useState(false)
 
-            //Adicionar
-            setItems(oldArray => [...oldArray, res.rows.item(i)])
-          
-          }
-       
+    //Quando o código for escaneado faça:
+    const onCodeScanned = (type, data) => {
+        // GUARDAR
+        // barCode.create({ code: data })
+        //   .then(Roda())
+        //   .catch(err => console.log(err))
+        Alert('DEU CERTO '+data)
+        setCodigo(data)
+    }
+
+    const ModalPlus = () => {
+        function fechar(fechar) {
+            setModalVisible(!fechar)
         }
-      )
-    })
-  }, [att])
+        function addFechar(fechar, codigo, qt) {
+            // barCode.create({ code: codigo })
+            //    .then()
+            //    .catch(err => console.log(err))
+            setModalVisible(!fechar)
 
+        }
+        if (modalVisible == true) {
+            return (<ModalInputs codigo={codigo} habilitado={modalVisible} fechar={fechar} addFechar={addFechar} />)
+        } else {
+            return false
+        }
+    }
 
-
-
-  //Quando o código for escaneado faça:
-  const onCodeScanned = (type, data) => {
-    // GUARDAR
-    barCode.create({ code: data })
-      .then(setAtt(!att))
-      .catch(err => console.log(err))
-
-    setModalVisible(false)
-  }
-
-
-  const renderItem = ({ item }) => {
-    //const listItems = items.map(c(items) => items);
     return (
-      <View style={styles.boxLista}>
-        <Text>Código{item.code}</Text>
-        <Text>Id:{item.id}</Text>
-      </View>
-    )
+        <View style={styles.container}>
+            <Modal
+                transparent={true}
+                visible={sucess}
+                style={styles.modalCheck}
+            >
+                <AntDesign name="check" size={24} color="black" />
+                <Text>Produto adicionado</Text>
+            </Modal>
+            <View style={styles.containerNav}>
 
-  }
+                <TouchableOpacity
+                    style={[styles.containerIconDiv, {
+                        padding: 10, position: 'absolute',
+                        backgroundColor: 'rgba(6,55,66,1)',
+                        right: '1%',
+                        borderRadius: 10
+                    }]}
+                    onPress={() => { props.navigation.navigate('Lista de produtos') }}
+                >
+                    <Entypo name="list" size={35} color="white" />
+                </TouchableOpacity>
+            </View>
 
-  return (
-    <View style={styles.container}>
-      <Modal
-        visible={modalVisible}
-        animationType='fade'
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modal}>
-          <Scanner onCodeScanned={onCodeScanned} />
-          <TouchableOpacity
-            style={styles.botao}
-            onPress={() => setModalVisible(false)}
-          >
-            <Text styles={styles.textBotao}>Cancelar</Text>
-          </TouchableOpacity>
+            <View style={{
+                flex: 1, justifyContent: 'center', alignItems: 'center', height: '100%',
+                width: '100%'
+            }} >
+                <Scanner onCodeScanned={onCodeScanned} />
+            </View>
+
+            <ModalPlus />
+
+            <TouchableOpacity
+                style={{
+                    padding: 10, zIndex: 1, position: 'absolute',
+                    backgroundColor: 'rgba(6,55,66,1)',
+                    bottom: '15%', right: '2%',
+                    borderRadius: 10
+                }}
+                onPress={() => { setModalVisible(true) }}
+            >
+                <AntDesign name="plus" size={30} color="white" />
+            </TouchableOpacity>
+
         </View>
-      </Modal>
-
-
-    
-      <TouchableOpacity style={styles.botao} onPress={() => setModalVisible(true)}>
-        <Text style={styles.textBotao}>
-          Escanear
-        </Text>
-      </TouchableOpacity>
-
-      <View style={styles.cardLista}>
-        {(items.length > 0)?<FlatList data={items} renderItem={renderItem} inverted />:<ActivityIndicator color="#3FBFBF" size={65}/>}
-      </View>
-    </View>
-  )
+    )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    paddingTop: 15
-  },
-  modal: {
-    marginTop:'50%',
-    marginHorizontal:10,
-    height: '45%',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    backgroundColor: '#E8E8E8',
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
+    container: {
+        flex: 1,
+        backgroundColor: 'rgba(6,55,66,0.7)',
     },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-
-    elevation: 6,
-  },
-  botao: {
-    padding: 15,
-    backgroundColor: '#3FBFBF',
-    marginBottom: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 5,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
+    containerNav: {
+        flexDirection: 'row',
+        width: '100%',
+        height: '5%',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        marginTop: '1%'
     },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-
-    elevation: 6,
-  },
-  textBotao: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  cardLista: {
-    backgroundColor: '#E8E8E8',
-    height: '75%',
-    width: '85%',
-    padding: 15,
-    justifyContent: 'center',
-  },
-  boxLista: {
-    backgroundColor: '#3FBFBF',
-    marginBottom: 10,
-    padding: 15,
-    borderRadius: 10
-  },
-  textBoxLista: {
-    color: '#fff',
-    fontSize: 16,
-    letterSpacing: 0.5,
-    lineHeight: 25
-  }
+    containerIconDiv: {
+        alignItems: 'flex-end',
+    },
+    textLabel: {
+        fontSize: 15,
+        color: 'white',
+        letterSpacing: 0.4,
+    },
+    modalCheck:{
+        backgroundColor: 'rgb(6,55,66)',
+        width: 100,
+        height: 100,
+    }
 })  
