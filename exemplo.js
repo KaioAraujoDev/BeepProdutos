@@ -1,46 +1,49 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, } from 'react-native';
+import 'react-native-get-random-values'; //DEPENDENCIA react-native-get-random-values
+import { v4 as uuidv4 } from 'uuid'; //DEPENDENCIA uuid
 
-import barCode from './services/sqlite/barCode'
+import BarCode from './services/sqlite/BarCode'
 
-const printBar = (barCode) => {
-  console.log(`id:${barCode.id}, code: ${barCode.code}`)
+/**
+ * Example Car Object: {
+ *  id: (auto generated in sqlite), 
+ *  brand: 'citroen',
+ *  model: 'ds3 performance',
+ *  hp: 208
+ * } 
+ */
+const printBar = (bar) => {
+  console.log(`id: ${bar.id}, codigo: ${bar.codigo}, quantidade: ${bar.quantidade}, data: ${bar.data}`)
 }
 
 export default function App() {
+/*   //create
+  BarCode.create( {id: uuidv4(), codigo:'123', quantidade: '1'} )
+    .then( id => console.log('Bar created with id: '+ id) )
+    .catch( err => console.log(err) ) */
 
-  //Create
-  barCode.create( {code: '123'} )
-    .then(id => console.log('Codigo salvo com id: ' + id) )
-    .catch( err => console.log(err) )
+/*   //update
+  BarCode.update('1cf352df-1ee4-4e23-b669-63b1337cb34f', {codigo:'456', quantidade:'2'} )
+    .then( updated => console.log('Bars updated: '+ updated) )
+    .catch( err => console.log(err) ) */
 
-  barCode.create( {code: '456'} )
-  .then(id => console.log('Codigo salvo com id: ' + id) )
-  .catch( err => console.log(err) )
 
-  barCode.all()
-      .then(
-        bars => bars.forEach( b => printBar(b))
-      )
+/*     //delete
+  BarCode.remove()
+    .then( updated => console.log('bar removed: '+ updated) )
+    .catch( err => console.log(err) ) */
 
-  console.log('============================================')
+  //all
+  BarCode.all()
+    .then( 
+      bar => bar.forEach( c => printBar(c) )
+    )
 
-  barCode.remove(9)
-      .then( code => console.log('Codigo Removido: '+ code) )
-      .catch( err => console.log(err) )
 
-  barCode.remove(10)
-      .then( code => console.log('Codigo Removido: '+ code) )
-      .catch( err => console.log(err) )
-  
-  barCode.all()
-  .then(
-    bars => bars.forEach( b => printBar(b))
-  )
-      
   return (
     <View style={styles.container}>
-      <Text>(Check Console)!</Text>
+      <Text>(Check the Console)</Text>
     </View>
   );
 }
@@ -49,7 +52,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'center', 
+    justifyContent: 'center', 
   },
 });
