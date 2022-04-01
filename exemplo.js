@@ -13,6 +13,8 @@ import BarCode from './services/sqlite/BarCode'
  *  hp: 208
  * } 
  */
+
+//COMENTARIO TESTE DE ATUALIZAÇÃO
 const printBar = (bar) => {
   console.log(`id: ${bar.id}, codigo: ${bar.codigo}, quantidade: ${bar.quantidade}, data: ${bar.data}`)
 }
