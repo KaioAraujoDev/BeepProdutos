@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Feather, MaterialIcons, Ionicons } from '@expo/vector-icons';
 import {
     View,
     Text,
@@ -107,31 +108,50 @@ export default function TelaLista() {
         }
     }, [search])
 
-    //vari
-   
-const [itemSelect,setItemSelect] = useState(false)
+
+    const [itemSelect, setItemSelect] = useState('')
+
+
     const renderItem = ({ item }) => {
-        
-        //função para verificar se o bloco é editavel ou não
-
-        function verifyVisibility(id){
-            //Quero que seja editavel apenas o campo com o id recebido
-                setItemSelect(id)
-        }
-
-
-        // 1º Tenho que saber qual elemento foi selecionado
-        //Posso passar por  parametro o id que foi selecionado
         return (
-            <TouchableOpacity onLongPress={()=>{verifyVisibility(item.id)}} style={styles.boxLista}>
-                <View style={[
-                    styles.naoeditavel]}>
-                    <Text style={[styles.textBoxLista, { fontSize: 19, textAlign: 'center', marginBottom: 10, fontWeight: 'bold' }]}>Produto: <Text style={[styles.textBoxLista, { fontWeight: 'bold', fontSize: 18 }]}>{item.code}</Text></Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <Text style={[styles.textBoxLista, { fontSize: 16 }]}>Id: <Text style={{ fontSize: 13 }}>{item.id}</Text></Text>
-                        <Text style={[styles.textBoxLista, { fontSize: 16 }]}>Quantidade: <Text style={{ fontSize: 13 }}>102</Text></Text>
+
+            <TouchableOpacity onLongPress={() => { setItemSelect(item.id) }} style={styles.boxLista}>
+                {item.id == itemSelect && (
+                    <View>
+                        <TouchableOpacity style={{paddingLeft:10,paddingTop:1}} onPress={()=>{setItemSelect('')}}>
+                                <Ionicons name="arrow-back" size={24} color="black" />
+                        </TouchableOpacity>
+                        <View style={styles.editList}>
+                            <TouchableOpacity style={{alignItems:'center'}}>
+                                <Feather name="edit" size={24} color="black" />
+                                <Text>Editar Produto</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{marginLeft:30,alignItems:'center'}}>
+                                <MaterialIcons name="delete" size={24} color="black" />
+                                <Text>Excluir Produto</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
+                )
+                }
+                {item.id != itemSelect &&
+                    (
+                        <View>
+                            <Text 
+                            style={[styles.textBoxLista, 
+                            { fontSize: 19, textAlign: 'center', marginBottom: 10, fontWeight: 'bold' }]}>
+                            Produto: 
+                                <Text style={[styles.textBoxLista, { fontWeight: 'bold', fontSize: 18 }]}>
+                                    {item.code}
+                                </Text>
+                            </Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                                <Text style={[styles.textBoxLista, { fontSize: 16 }]}>Id: <Text style={{ fontSize: 13 }}>{item.id}</Text></Text>
+                                <Text style={[styles.textBoxLista, { fontSize: 16 }]}>Quantidade: <Text style={{ fontSize: 13 }}>102</Text></Text>
+                            </View>
+                        </View>
+                    )
+                }
             </TouchableOpacity>
         )
 
@@ -164,8 +184,8 @@ const [itemSelect,setItemSelect] = useState(false)
                 />
             </View>
             <View style={styles.listContainer} >
-                {/* <VerifyItems />  */}
-                <FlatList data={Data} renderItem={renderItem} inverted={true} />
+                 <VerifyItems />
+                {/* <FlatList data={Data} renderItem={renderItem} keyExtractor={(item) => item.id} inverted={true} /> */}
             </View>
         </View>
 
@@ -207,10 +227,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 25
     },
-    editavel:{
-        display:'none'
-    },
-    naoeditavel:{
-        display: 'flex'
+    editList: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
     }
 })
