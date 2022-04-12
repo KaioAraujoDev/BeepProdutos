@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import Scanner from './Scanner';
 import ModalInputs from './modal';
-import barCode from '../../../services/sqlite/barCode';
+import Barcode from '../../../services/sqlite/BarCode';
 import db from '../../../services/sqlite/SQLiteDatabase';
 
 export default function TelaScanner(props) {
@@ -30,7 +30,7 @@ export default function TelaScanner(props) {
     //Quando o código for escaneado faça:
     const onCodeScanned = (type, data) => {
         // GUARDAR
-        // barCode.create({ code: data })
+        // Barcode.create({ code: data })
         //   .then(Roda())
         //   .catch(err => console.log(err))
         Alert('DEU CERTO '+data)
@@ -42,7 +42,7 @@ export default function TelaScanner(props) {
             setModalVisible(!fechar)
         }
         function addFechar(fechar, codigo, qt) {
-            // barCode.create({ code: codigo })
+            // Barcode.create({ code: codigo })
             //    .then()
             //    .catch(err => console.log(err))
             setModalVisible(!fechar)
