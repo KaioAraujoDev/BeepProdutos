@@ -20,7 +20,8 @@ export default function App() {
         headerTitleStyle:{
           color:'white'
         },
-        headerTintColor:'white'
+        headerTintColor:'white',
+        headerShown: false,
       }}
       >
         <Stack.Screen name='Tela Inicial' component={TelaInicial}/>
